@@ -29,12 +29,6 @@ def _jupyter_nbextension_paths():
         ),
         dict(
             section="notebook",
-            src=os.path.join('nbextensions', 'test'),
-            dest="test",
-            require="test/main"
-        ),
-        dict(
-            section="notebook",
             src=os.path.join('nbextensions', 'submit_assignment'),
             dest="submit_assignment",
             require="submit_assignment/main"
