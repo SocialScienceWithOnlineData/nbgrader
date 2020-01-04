@@ -82,12 +82,9 @@ class ExchangeFetchAssignment(Exchange):
             shutil.copytree(src, dest, ignore=shutil.ignore_patterns(*self.coursedir.ignore))
 
     def apply_watermark(self, dest, user_name, date_str):
-        print('dest: {}'.format(dest))
         for filename in sorted(os.listdir(dest)):
             destpath = os.path.join(dest,filename)
-            print('destpath: {}'.format(destpath))
             if os.path.isfile(destpath) and os.path.splitext(destpath)[1] == '.ipynb':
-                print(destpath, user_name, date_str)
                 with open(destpath,'r') as in_file:
                     nb = nbformat.read(in_file, nbformat.NO_CONVERT)
                 nb['metadata']['nbgrader_fetch'] = {'student_id':user_name,'date':date_str}
@@ -104,7 +101,6 @@ class ExchangeFetchAssignment(Exchange):
             student_id = self.coursedir.student_id
         else:
             student_id = get_username()
-        print('Applying watermark to {}'.format(destdir))
         self.apply_watermark(destdir,student_id,datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     def copy_files(self):
