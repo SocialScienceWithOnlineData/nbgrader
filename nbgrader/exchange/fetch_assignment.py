@@ -1,10 +1,12 @@
 import os
 import shutil
+import nbformat
+import datetime
 
 from traitlets import Bool
 
 from .exchange import Exchange
-from ..utils import check_mode
+from ..utils import check_mode, get_username
 
 
 class ExchangeFetchAssignment(Exchange):
@@ -79,8 +81,35 @@ class ExchangeFetchAssignment(Exchange):
         else:
             shutil.copytree(src, dest, ignore=shutil.ignore_patterns(*self.coursedir.ignore))
 
+    def apply_watermark(self, dest, user_name, date_str):
+        print('dest: {}'.format(dest))
+        for filename in sorted(os.listdir(dest)):
+            destpath = os.path.join(dest,filename)
+            print('destpath: {}'.format(destpath))
+            if os.path.isfile(destpath) and os.path.splitext(destpath)[1] == '.ipynb':
+                print(destpath, user_name, date_str)
+                with open(destpath,'r') as in_file:
+                    nb = nbformat.read(in_file, nbformat.NO_CONVERT)
+                nb['metadata']['nbgrader_fetch'] = {'student_id':user_name,'date':date_str}
+                with open(destpath,'w') as out_file:
+                    nbformat.write(nb,out_file)
+            elif os.path.isdir(destpath):
+                self.apply_watermark(destpath, user_name, date_str)
+
+    def do_watermark(self, destdir):
+        if self.coursedir.student_id != '*':
+            # An explicit student id has been specified on the command line; we use it as student_id
+            if '*' in self.coursedir.student_id or '+' in self.coursedir.student_id:
+                self.fail("The student ID should contain no '*' nor '+'; got {}".format(self.coursedir.student_id))
+            student_id = self.coursedir.student_id
+        else:
+            student_id = get_username()
+        print('Applying watermark to {}'.format(destdir))
+        self.apply_watermark(destdir,student_id,datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
     def copy_files(self):
         self.log.info("Source: {}".format(self.src_path))
         self.log.info("Destination: {}".format(self.dest_path))
         self.do_copy(self.src_path, self.dest_path)
+        self.do_watermark(self.dest_path)
         self.log.info("Fetched as: {} {}".format(self.coursedir.course_id, self.coursedir.assignment_id))
