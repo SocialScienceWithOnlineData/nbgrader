@@ -1,5 +1,9 @@
 # nbgrader
 
+----
+This fork implements a Submit button in the notebook, which with other scripts for automatically fetching for all students (see cjnitta/NBGraderDocker), makes it possible to insulate students entirely from the file browser part of JupyterHub and link each student directly to the notebook. Ideal for very beginner students with limited complexity budget.
+
+----
 Linux: [![TravisCI](https://travis-ci.org/jupyter/nbgrader.svg?branch=master)](https://travis-ci.org/jupyter/nbgrader)  
 Windows: [![Azure Devops](https://dev.azure.com/jessicabhamrick/nbgrader/_apis/build/status/jupyter.nbgrader?branchName=master)](https://dev.azure.com/jessicabhamrick/nbgrader/_build/latest?definitionId=1&branchName=master)  
 Forum: [![Google Group](https://img.shields.io/badge/-Google%20Group-lightgrey.svg)](https://groups.google.com/forum/#!forum/jupyter)  
